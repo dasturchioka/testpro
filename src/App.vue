@@ -1,5 +1,13 @@
+<script setup>
+import { useHead } from "@vueuse/head";
+
+useHead({
+  link: [{ rel: "icon", href: require("./assets/logoOnly.svg") }],
+});
+</script>
+
 <template>
-  <router-view/>
+  <div>
+    <router-view />
+  </div>
 </template>
-
-
