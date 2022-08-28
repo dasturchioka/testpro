@@ -3,6 +3,64 @@ import logo from "../assets/logo.svg";
 import user from "../assets/user.svg";
 import call from "../assets/call.svg";
 import grid from "../assets/grid.svg";
+import TheToast from "../components/TheToast.vue";
+import axios from "axios";
+import { computed, reactive, ref } from "vue";
+
+let d = new Date();
+let dFormat = `${d.getDate() > 9 ? d.getDate() : `0` + d.getDate()}/${
+  d.getMonth() + 1 > 9 ? d.getMonth() + 1 : `0` + (d.getMonth() + 1)
+}/${d.getFullYear()} ${d.getHours() > 9 ? d.getHours() : `0` + d.getHours()}:${
+  d.getMinutes() > 9 ? d.getMinutes() : `0` + d.getMinutes()
+}`;
+
+let message = reactive({
+  firstname: "",
+  lastname: "",
+  fullname: computed(() => `${message.firstname} ${message.lastname}`),
+  phone: "+998",
+  thoughts: "",
+  course: "",
+  fullmessage: computed(
+    () =>
+      `#murojaat\n\n👤 O'quvchi: <b>${message.fullname}</b>\n📞 Telefon: <b>${
+        message.phone
+      }</b>\n🎯 Kurs: <b>${message.course}</b>\n\n✉️ Qo'shimcha: ${
+        message.thoughts ? message.thoughts : `<b>Mavjud emas</b>`
+      }\n\n🕛<b>${dFormat}</b>`
+  ),
+});
+
+const toastOptions = reactive({
+  show: false,
+  message: "",
+});
+
+const token = "5515300486:AAFFD8uYOQTu3sHbclBhPTeRuAoiFOgHPeY";
+const chat_id = -781803665;
+const endpoint = ref(`https://api.telegram.org/bot${token}/sendMessage`);
+
+const sendMessage = (e) => {
+  e.preventDefault();
+  axios
+    .post(
+      endpoint.value,
+      { chat_id, text: message.fullmessage, parse_mode: "html" },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((res) => {
+      toastOptions.show = true;
+      toastOptions.message = `Hurmatli ${message.firstname}, sizning ma'lumotlaringiz adminstratsiyaga yuborildi. Tez orada siz bilan bog'lanishadi!`;
+      
+      setTimeout(() => {
+        toastOptions.show = false;
+      }, 6000);
+    });
+};
 </script>
 
 <template>
@@ -15,10 +73,14 @@ import grid from "../assets/grid.svg";
           <img :src="logo" alt="logo testpro gurlan" />
         </div>
         <div class="box-form">
+          <TheToast
+            v-show="toastOptions.show"
+            :message="toastOptions.message"
+          />
           <h1 class="form-title font-black text-dark text-4xl mt-20">
             Ro'yxatdan o'tish <span class="mark text-main">.</span>
           </h1>
-          <form class="form mt-16">
+          <form @submit.prevent="sendMessage" class="form mt-16">
             <div class="form-first-line mb-6 grid grid-cols-2 gap-x-8">
               <div
                 class="input flex flex-row border-2 border-gray rounded-xl items-center"
@@ -29,6 +91,7 @@ import grid from "../assets/grid.svg";
                   class="w-full bg-transparent py-3 outline-none"
                   placeholder="Ismingiz*"
                   required
+                  v-model="message.firstname"
                 />
               </div>
               <div
@@ -39,6 +102,7 @@ import grid from "../assets/grid.svg";
                   type="text"
                   class="w-full bg-transparent py-3 outline-none"
                   placeholder="Familiyangiz*"
+                  v-model="message.lastname"
                   required
                 />
               </div>
@@ -53,6 +117,7 @@ import grid from "../assets/grid.svg";
                   class="w-full bg-transparent py-3 outline-none"
                   placeholder="Telefon raqamingiz*"
                   pattern="^[0-9 ()+-]+$"
+                  v-model="message.phone"
                   required
                 />
               </div>
@@ -63,6 +128,7 @@ import grid from "../assets/grid.svg";
                 <input
                   type="text"
                   class="w-full bg-transparent py-3 outline-none"
+                  v-model="message.course"
                   placeholder="Kurs nomi*"
                   required
                 />
@@ -71,11 +137,12 @@ import grid from "../assets/grid.svg";
                 <textarea
                   class="border-2 p-6 outline-none border-gray rounded-xl w-full bg-transparent min-h-[150px] max-h-[160px]"
                   placeholder="Qo'shimcha"
+                  v-model="message.thoughts"
                 ></textarea>
               </div>
             </div>
             <button
-              class="form-submit transition hover:bg-slate-900 rounded-md w-full bg-dark text-white font-medium mt-8 py-4"
+              class="form-submit transition hover:bg-main rounded-md w-full bg-dark text-white font-medium mt-8 py-4"
             >
               JO'NATISH
             </button>
