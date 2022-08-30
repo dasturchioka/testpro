@@ -55,10 +55,15 @@ const sendMessage = (e) => {
     .then((res) => {
       toastOptions.show = true;
       toastOptions.message = `Hurmatli ${message.firstname}, sizning ma'lumotlaringiz adminstratsiyaga yuborildi. Tez orada siz bilan bog'lanishadi!`;
-      
+
       setTimeout(() => {
         toastOptions.show = false;
+        toastOptions.message = "";
       }, 6000);
+    })
+    .catch((err) => {
+      toastOptions.show = false;
+      toastOptions.message = `Tizimda nosozlik: ${error.message}`;
     });
 };
 </script>
