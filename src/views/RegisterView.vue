@@ -37,7 +37,7 @@ const toastOptions = reactive({
 });
 
 const token = "5515300486:AAFFD8uYOQTu3sHbclBhPTeRuAoiFOgHPeY";
-const chat_id = -781803665;
+const chat_id = -1001557089691;
 const endpoint = ref(`https://api.telegram.org/bot${token}/sendMessage`);
 
 const sendMessage = (e) => {
