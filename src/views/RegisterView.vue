@@ -59,7 +59,6 @@ const sendMessage = (e) => {
       toastOptions.show = true;
       toastOptions.message = `Hurmatli ${message.firstname}, sizning ma'lumotlaringiz adminstratsiyaga yuborildi. Tez orada siz bilan bog'lanishadi!`;
 
-      loading.value = false;
       setTimeout(() => {
         toastOptions.show = false;
         toastOptions.message = "";
