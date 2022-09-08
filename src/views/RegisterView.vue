@@ -7,6 +7,8 @@ import TheToast from "../components/TheToast.vue";
 import axios from "axios";
 import { computed, reactive, ref } from "vue";
 
+let loading = ref(false);
+
 let d = new Date();
 let dFormat = `${d.getDate() > 9 ? d.getDate() : `0` + d.getDate()}/${
   d.getMonth() + 1 > 9 ? d.getMonth() + 1 : `0` + (d.getMonth() + 1)
@@ -42,6 +44,7 @@ const endpoint = ref(`https://api.telegram.org/bot${token}/sendMessage`);
 
 const sendMessage = (e) => {
   e.preventDefault();
+  loading.value = true;
   axios
     .post(
       endpoint.value,
@@ -56,12 +59,14 @@ const sendMessage = (e) => {
       toastOptions.show = true;
       toastOptions.message = `Hurmatli ${message.firstname}, sizning ma'lumotlaringiz adminstratsiyaga yuborildi. Tez orada siz bilan bog'lanishadi!`;
 
+      loading.value = false;
       setTimeout(() => {
         toastOptions.show = false;
         toastOptions.message = "";
       }, 6000);
     })
     .catch((err) => {
+      loading.value = false;
       toastOptions.show = false;
       toastOptions.message = `Tizimda nosozlik: ${error.message}`;
     });
@@ -147,7 +152,9 @@ const sendMessage = (e) => {
               </div>
             </div>
             <button
-              class="form-submit transition hover:bg-main rounded-md w-full bg-dark text-white font-medium mt-8 py-4"
+              type="submit"
+              :disabled="loading"
+              class="form-submit disabled:bg-gray disabled:cursor-default transition hover:bg-main rounded-md w-full bg-dark text-white font-medium mt-8 py-4"
             >
               JO'NATISH
             </button>
